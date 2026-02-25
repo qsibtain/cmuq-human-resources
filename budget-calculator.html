@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Position Budget Calculator — CMU-Q</title>
+  <style>
+    :root {
+      --cmu-red: #C41230;
+      --cmu-red-dark: #A00F28;
+      --cmu-red-light: #F9E6EA;
+      --cmu-gray-dark: #333333;
+      --cmu-gray-medium: #6B6B6B;
+      --cmu-gray-light: #E8E8E8;
+      --cmu-white: #FFFFFF;
+      --green: #2E7D32;
+      --green-light: #E8F5E9;
+      --orange: #E65100;
+      --orange-light: #FFF3E0;
+      --border-radius: 6px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --transition: 0.2s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #F4F4F4;
+      color: var(--cmu-gray-dark);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: var(--cmu-red);
+      color: var(--cmu-white);
+      padding: 24px 0;
+      text-align: center;
+    }
+    .header h1 { font-size: 24px; font-weight: 700; }
+    .header p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+
+    /* Container */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    /* Info banner */
+    .info-banner {
+      background: #E3F2FD;
+      border: 1px solid #90CAF9;
+      border-radius: var(--border-radius);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--cmu-gray-dark);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .info-banner .icon {
+      background: #1565C0;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--cmu-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--cmu-white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header.red { background: var(--cmu-red); }
+    .card-header.green { background: var(--green); }
+    .card-header .card-icon {
+      background: rgba(255,255,255,0.25);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .card-body { padding: 24px; }
+
+    /* Input layout */
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .input-grid.single { grid-template-columns: 1fr; }
+
+    .field-group { display: flex; flex-direction: column; }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cmu-gray-dark);
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      padding: 10px 12px;
+      border: 1px solid #D0D0D0;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--cmu-gray-dark);
+      background: var(--cmu-white);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--cmu-red);
+      box-shadow: 0 0 0 3px rgba(196, 18, 48, 0.1);
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--cmu-gray-medium);
+      margin-top: 3px;
+    }
+
+    /* Position info chips */
+    .position-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: #F5F5F5;
+      border-radius: var(--border-radius);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+    .info-chip {
+      display: inline-flex;
+      align-items: center;
+      background: var(--cmu-white);
+      border: 1px solid #D0D0D0;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cmu-gray-dark);
+      white-space: nowrap;
+    }
+    .info-chip .chip-label {
+      color: var(--cmu-gray-medium);
+      margin-right: 5px;
+      font-weight: 400;
+    }
+
+    /* Range slider styling */
+    .slider-group {
+      margin-bottom: 16px;
+    }
+    .slider-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .slider-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--cmu-red);
+      font-variant-numeric: tabular-nums;
+    }
+    .slider-value .unit {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cmu-gray-medium);
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--cmu-gray-light);
+      border-radius: 3px;
+      outline: none;
+      margin: 8px 0 4px;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--cmu-red);
+      cursor: pointer;
+      border: 2px solid var(--cmu-white);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      transition: transform 0.1s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--cmu-red);
+      cursor: pointer;
+      border: 2px solid var(--cmu-white);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    input[type="range"]:focus::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(196, 18, 48, 0.2);
+    }
+    .slider-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--cmu-gray-medium);
+    }
+
+    /* FT/PT badge */
+    .ftpt-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .ftpt-badge.full-time {
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .ftpt-badge.part-time-high {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+    .ftpt-badge.part-time-low {
+      background: var(--cmu-red-light);
+      color: var(--cmu-red);
+    }
+
+    /* Disabled slider */
+    .slider-disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .slider-disabled input[type="range"] {
+      cursor: not-allowed;
+    }
+
+    /* Date warning */
+    .date-warning {
+      background: #FFF8E1;
+      border: 1px solid #FFD54F;
+      border-radius: var(--border-radius);
+      padding: 8px 14px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #6D4C00;
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .date-warning .warn-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--cmu-gray-light);
+      margin: 20px 0;
+    }
+
+    /* Results */
+    .results-waiting {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--cmu-gray-medium);
+      font-size: 14px;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .results-table th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--cmu-gray-medium);
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--cmu-gray-light);
+    }
+    .results-table th.amt { text-align: right; }
+    .results-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #F0F0F0;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+    .results-table td.label-col {
+      color: var(--cmu-gray-dark);
+      font-weight: 500;
+    }
+    .results-table td.label-col .sub {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--cmu-gray-medium);
+    }
+    .results-table td.usd {
+      text-align: right;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--cmu-gray-dark);
+      white-space: nowrap;
+    }
+    .results-table td.qar {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--cmu-gray-medium);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .results-table tr.section-header td {
+      padding-top: 18px;
+      padding-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--cmu-gray-medium);
+      border-bottom: 1px solid var(--cmu-gray-light);
+      background: #FAFAFA;
+    }
+    .results-table tr.subtotal td {
+      border-top: 1px dashed #CCC;
+      font-weight: 600;
+    }
+    .results-table tr.total td {
+      background: var(--cmu-red-light);
+      border-top: 2px solid var(--cmu-red);
+      border-bottom: 2px solid var(--cmu-red);
+      font-weight: 700;
+    }
+    .results-table tr.total td.usd {
+      font-size: 18px;
+      color: var(--cmu-red);
+    }
+    .results-table tr.total td.qar {
+      font-size: 15px;
+      color: var(--cmu-red-dark);
+      font-weight: 600;
+    }
+    .results-table tr.total td.label-col {
+      color: var(--cmu-red-dark);
+      font-size: 15px;
+    }
+
+    /* Summary boxes */
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .summary-box {
+      background: #F8F9FA;
+      border: 1px solid var(--cmu-gray-light);
+      border-radius: var(--border-radius);
+      padding: 14px;
+      text-align: center;
+    }
+    .summary-box .sum-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--cmu-gray-medium);
+      margin-bottom: 4px;
+    }
+    .summary-box .sum-usd {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cmu-gray-dark);
+    }
+    .summary-box .sum-qar {
+      font-size: 13px;
+      color: var(--cmu-gray-medium);
+      margin-top: 2px;
+    }
+    .summary-box.highlight {
+      background: var(--cmu-red-light);
+      border-color: var(--cmu-red);
+    }
+    .summary-box.highlight .sum-usd { color: var(--cmu-red); }
+    .summary-box.highlight .sum-qar { color: var(--cmu-red-dark); }
+
+    /* Print styles */
+    .btn-print {
+      background: var(--cmu-white);
+      border: 1px solid var(--cmu-gray-light);
+      color: var(--cmu-gray-dark);
+      padding: 10px 24px;
+      border-radius: var(--border-radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-print:hover { background: #F0F0F0; }
+
+    .btn-reset {
+      background: var(--cmu-white);
+      border: 1px solid var(--cmu-red);
+      color: var(--cmu-red);
+      padding: 10px 24px;
+      border-radius: var(--border-radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-reset:hover { background: var(--cmu-red-light); }
+
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    @media print {
+      body { background: white; font-size: 12px; line-height: 1.4; }
+      .header { padding: 10px 0; }
+      .header h1 { font-size: 18px; }
+      .header p { font-size: 11px; margin-top: 2px; }
+      .container { padding: 12px 16px 0; }
+      .card { box-shadow: none; border: 1px solid #DDD; margin-bottom: 12px; }
+      .card-header { padding: 8px 16px; font-size: 13px; }
+      .card-header .card-icon { width: 22px; height: 22px; font-size: 11px; }
+      .card-body { padding: 12px 16px; }
+      .actions-bar, .info-banner, .date-warning { display: none !important; }
+      input[type="range"] { display: none; }
+      .slider-group { margin-bottom: 8px; }
+      .slider-value { font-size: 14px; }
+      .slider-header label { font-size: 11px; }
+      .slider-range-labels { display: none; }
+      .position-info { padding: 6px 10px; margin-bottom: 8px; }
+      .info-chip { font-size: 10px; padding: 2px 8px; }
+      .input-grid { gap: 8px; margin-bottom: 8px; }
+      label { font-size: 11px; margin-bottom: 2px; }
+      input[type="text"], input[type="number"], input[type="date"], select {
+        padding: 4px 8px; font-size: 11px;
+      }
+      .field-hint { font-size: 9px; margin-top: 1px; }
+      .divider { margin: 8px 0; }
+      .results-table th { padding: 4px 8px; font-size: 10px; }
+      .results-table td { padding: 5px 8px; font-size: 12px; }
+      .results-table td.label-col .sub { font-size: 9px; }
+      .results-table tr.section-header td { padding-top: 10px; padding-bottom: 3px; font-size: 10px; }
+      .results-table tr.total td.usd { font-size: 14px; }
+      .results-table tr.total td.qar { font-size: 12px; }
+      .results-table tr.total td.label-col { font-size: 12px; }
+      .summary-row { gap: 8px; margin-top: 10px; }
+      .summary-box { padding: 8px; }
+      .summary-box .sum-label { font-size: 9px; margin-bottom: 2px; }
+      .summary-box .sum-usd { font-size: 14px; }
+      .summary-box .sum-qar { font-size: 10px; margin-top: 1px; }
+      .ftpt-badge { font-size: 10px; padding: 1px 6px; }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .input-grid { grid-template-columns: 1fr; }
+      .summary-row { grid-template-columns: 1fr; }
+      .header h1 { font-size: 20px; }
+      .position-info { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Carnegie Mellon University in Qatar</h1>
+    <p>Research Position Cost Estimator</p>
+  </div>
+
+  <div class="container">
+
+    <div class="info-banner">
+      <div class="icon">i</div>
+      <div>
+        Use this calculator to estimate the total cost of a research position. All primary values are in <strong>USD</strong> with <strong>QAR equivalents</strong> shown alongside. Exchange rate: <strong>$1.00 = QAR 3.65</strong>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card">
+      <div class="card-header red">
+        <span class="card-icon">1</span>
+        Position Details
+      </div>
+      <div class="card-body">
+
+        <!-- Position Name dropdown (full width) -->
+        <div class="input-grid single">
+          <div class="field-group">
+            <label for="positionName">Position Name</label>
+            <select id="positionName">
+              <option value="">Select position...</option>
+              <option value="RA">Research Assistant</option>
+              <option value="RAI">Research Associate I</option>
+              <option value="RAII">Research Associate II</option>
+              <option value="RAIII">Research Associate III</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Position info chips (hidden until position selected) -->
+        <div class="position-info" id="positionInfo" style="display: none;">
+          <span class="info-chip"><span class="chip-label">Grade:</span> <span id="chipGrade">—</span></span>
+          <span class="info-chip"><span class="chip-label">Pay Type:</span> <span id="chipPayType">—</span></span>
+          <span class="info-chip"><span class="chip-label">Pay Range:</span> <span id="chipPayRange">—</span></span>
+        </div>
+
+        <!-- Pay Rate slider (hidden until position selected) -->
+        <div class="slider-group" id="paySliderGroup" style="display: none;">
+          <div class="slider-header">
+            <label for="paySlider">Pay Rate</label>
+            <div class="slider-value" id="paySliderValue">—</div>
+          </div>
+          <input type="range" id="paySlider" min="0" max="100" step="1" value="0">
+          <div class="slider-range-labels">
+            <span id="paySliderMin">—</span>
+            <span id="paySliderMax">—</span>
+          </div>
+        </div>
+
+        <!-- Hours per Week slider -->
+        <div class="slider-group" id="hoursSliderGroup">
+          <div class="slider-header">
+            <label for="hoursSlider">Hours per Week <span class="ftpt-badge" id="ftptBadge" style="display: none;">—</span></label>
+            <div class="slider-value" id="hoursSliderValue">37.5 <span class="unit">hrs/wk</span></div>
+          </div>
+          <input type="range" id="hoursSlider" min="1" max="37.5" step="0.5" value="37.5">
+          <div class="slider-range-labels">
+            <span>1 hr</span>
+            <span>37.5 hrs</span>
+          </div>
+        </div>
+
+        <!-- Start Date + End Date -->
+        <div class="input-grid">
+          <div class="field-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate">
+          </div>
+          <div class="field-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate">
+          </div>
+        </div>
+
+        <!-- Date warning -->
+        <div class="date-warning" id="dateWarning">
+          <span class="warn-icon">&#9888;</span>
+          <span id="dateWarningText"></span>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Benefit Rate + Housing Allowance -->
+        <div class="input-grid">
+          <div class="field-group">
+            <label for="benefitRate">Benefit Rate (%)</label>
+            <input type="number" id="benefitRate" value="36.6" min="0" max="100" step="0.1">
+            <div class="field-hint">Currently 36.6% — updated annually</div>
+          </div>
+          <div class="field-group">
+            <label for="housingMonthly">Housing Allowance (USD/month)</label>
+            <input type="number" id="housingMonthly" value="2740" min="0" step="1">
+            <div class="field-hint" id="housingHint">$0 for employees working 17.5 hrs/wk or less</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card">
+      <div class="card-header green">
+        <span class="card-icon">$</span>
+        Budget Estimate
+      </div>
+      <div class="card-body">
+
+        <div id="resultsWaiting" class="results-waiting">
+          Select a position, start date, and end date above to see the budget estimate.
+        </div>
+
+        <div id="resultsContent" style="display: none;">
+
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Line Item</th>
+                <th class="amt">USD</th>
+                <th class="amt">QAR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Contract Period -->
+              <tr class="section-header"><td colspan="3">Contract Period</td></tr>
+              <tr>
+                <td class="label-col">Contract Duration</td>
+                <td class="usd" id="resDuration" colspan="2">—</td>
+              </tr>
+              <tr>
+                <td class="label-col">Working Days (Sun–Thu)</td>
+                <td class="usd" id="resWorkingDays" colspan="2">—</td>
+              </tr>
+              <tr>
+                <td class="label-col">
+                  Effective Hourly Rate
+                  <span class="sub" id="resHoursNote"></span>
+                </td>
+                <td class="usd" id="resHourlyRateUSD">—</td>
+                <td class="qar" id="resHourlyRateQAR">—</td>
+              </tr>
+
+              <!-- Salary & Benefits -->
+              <tr class="section-header"><td colspan="3">Salary &amp; Benefits</td></tr>
+              <tr>
+                <td class="label-col">
+                  Base Salary
+                  <span class="sub" id="resBaseNote"></span>
+                </td>
+                <td class="usd" id="resBaseSalaryUSD">—</td>
+                <td class="qar" id="resBaseSalaryQAR">—</td>
+              </tr>
+              <tr>
+                <td class="label-col">
+                  Benefits
+                  <span class="sub" id="resBenefitNote"></span>
+                </td>
+                <td class="usd" id="resBenefitsUSD">—</td>
+                <td class="qar" id="resBenefitsQAR">—</td>
+              </tr>
+              <tr class="subtotal">
+                <td class="label-col">Subtotal: Salary + Benefits</td>
+                <td class="usd" id="resSubSalaryUSD">—</td>
+                <td class="qar" id="resSubSalaryQAR">—</td>
+              </tr>
+
+              <!-- Allowances -->
+              <tr class="section-header"><td colspan="3">Allowances</td></tr>
+              <tr>
+                <td class="label-col">
+                  Housing Allowance
+                  <span class="sub" id="resHousingNote"></span>
+                </td>
+                <td class="usd" id="resHousingUSD">—</td>
+                <td class="qar" id="resHousingQAR">—</td>
+              </tr>
+
+              <!-- Total -->
+              <tr class="total">
+                <td class="label-col">Total Estimated Cost</td>
+                <td class="usd" id="resTotalUSD">—</td>
+                <td class="qar" id="resTotalQAR">—</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Summary boxes -->
+          <div class="summary-row">
+            <div class="summary-box">
+              <div class="sum-label">Avg Monthly Salary</div>
+              <div class="sum-usd" id="sumMonthlySalaryUSD">—</div>
+              <div class="sum-qar" id="sumMonthlySalaryQAR">—</div>
+            </div>
+            <div class="summary-box">
+              <div class="sum-label">Avg Monthly Cost (All-in)</div>
+              <div class="sum-usd" id="sumMonthlyCostUSD">—</div>
+              <div class="sum-qar" id="sumMonthlyCostQAR">—</div>
+            </div>
+            <div class="summary-box highlight">
+              <div class="sum-label">Total Contract Cost</div>
+              <div class="sum-usd" id="sumTotalUSD">—</div>
+              <div class="sum-qar" id="sumTotalQAR">—</div>
+            </div>
+          </div>
+
+          <div class="actions-bar">
+            <button class="btn-reset" onclick="resetForm()">Reset</button>
+            <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // =============================================
+    // Constants
+    // =============================================
+    const EXCHANGE_RATE = 3.65;
+    const ANNUAL_HOURS = 1950; // 37.5 hrs/wk x 52 wks
+
+    // =============================================
+    // Position Data
+    // =============================================
+    const POSITIONS = {
+      RA:    { name: 'Research Assistant',     grade: 53, payType: 'Hourly',   min: 15,    max: 20,    step: 0.25, unit: '/hr'  },
+      RAI:   { name: 'Research Associate I',   grade: 55, payType: 'Hourly',   min: 17,    max: 24,    step: 0.25, unit: '/hr'  },
+      RAII:  { name: 'Research Associate II',  grade: 56, payType: 'Hourly',   min: 20,    max: 27,    step: 0.25, unit: '/hr'  },
+      RAIII: { name: 'Research Associate III', grade: 58, payType: 'Salaried', min: 45000, max: 63000, step: 500,  unit: '/yr'  }
+    };
+
+    // =============================================
+    // Formatting
+    // =============================================
+    function fmtUSD(n) {
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtQAR(n) {
+      return 'QAR ' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtUSDRound(n) {
+      return '$' + Math.round(n).toLocaleString('en-US');
+    }
+
+    function fmtQARRound(n) {
+      return 'QAR ' + Math.round(n).toLocaleString('en-US');
+    }
+
+    function toQAR(usd) {
+      return usd * EXCHANGE_RATE;
+    }
+
+    // =============================================
+    // Date Helpers
+    // =============================================
+
+    /** Returns true if the date falls on Sun-Thu (Qatar working days) */
+    function isWorkingDay(date) {
+      const day = date.getDay(); // 0=Sun, 1=Mon, ..., 4=Thu, 5=Fri, 6=Sat
+      return day >= 0 && day <= 4;
+    }
+
+    /** Count working days (Sun-Thu) from start to end inclusive */
+    function countWorkingDays(start, end) {
+      let count = 0;
+      const d = new Date(start);
+      while (d <= end) {
+        if (isWorkingDay(d)) count++;
+        d.setDate(d.getDate() + 1);
+      }
+      return count;
+    }
+
+    /** Calculate housing allowance with calendar-day proration month by month */
+    function calculateHousing(start, end, monthlyRate) {
+      if (monthlyRate <= 0) return 0;
+
+      let total = 0;
+      const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+      const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
+
+      while (cursor <= endMonth) {
+        const year = cursor.getFullYear();
+        const month = cursor.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // Determine range start and end within this month
+        const rangeStart = (year === start.getFullYear() && month === start.getMonth())
+          ? start.getDate() : 1;
+        const rangeEnd = (year === end.getFullYear() && month === end.getMonth())
+          ? end.getDate() : daysInMonth;
+
+        const daysInRange = rangeEnd - rangeStart + 1;
+
+        if (daysInRange === daysInMonth) {
+          total += monthlyRate;
+        } else {
+          total += monthlyRate * (daysInRange / daysInMonth);
+        }
+
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      return total;
+    }
+
+    // =============================================
+    // Date Validation (Fri/Sat warning)
+    // =============================================
+    function validateDates() {
+      const startVal = document.getElementById('startDate').value;
+      const endVal = document.getElementById('endDate').value;
+      const warningEl = document.getElementById('dateWarning');
+      const warningText = document.getElementById('dateWarningText');
+
+      const warnings = [];
+
+      if (startVal) {
+        const startDate = new Date(startVal + 'T00:00:00');
+        const day = startDate.getDay();
+        if (day === 5) warnings.push('Start date falls on a Friday (Qatar weekend).');
+        if (day === 6) warnings.push('Start date falls on a Saturday (Qatar weekend).');
+      }
+
+      if (endVal) {
+        const endDate = new Date(endVal + 'T00:00:00');
+        const day = endDate.getDay();
+        if (day === 5) warnings.push('End date falls on a Friday (Qatar weekend).');
+        if (day === 6) warnings.push('End date falls on a Saturday (Qatar weekend).');
+      }
+
+      if (warnings.length > 0) {
+        warningText.textContent = warnings.join(' ') + ' The Qatar work week is Sunday–Thursday.';
+        warningEl.style.display = 'flex';
+      } else {
+        warningEl.style.display = 'none';
+      }
+    }
+
+    // =============================================
+    // Position Change Handler
+    // =============================================
+    document.getElementById('positionName').addEventListener('change', function() {
+      const key = this.value;
+      const infoEl = document.getElementById('positionInfo');
+      const sliderGroup = document.getElementById('paySliderGroup');
+      const hoursSlider = document.getElementById('hoursSlider');
+      const hoursGroup = document.getElementById('hoursSliderGroup');
+
+      if (!key || !POSITIONS[key]) {
+        infoEl.style.display = 'none';
+        sliderGroup.style.display = 'none';
+        // Re-enable hours slider
+        hoursSlider.disabled = false;
+        hoursGroup.classList.remove('slider-disabled');
+        calculate();
+        return;
+      }
+
+      const pos = POSITIONS[key];
+
+      // Show info chips
+      document.getElementById('chipGrade').textContent = pos.grade;
+      document.getElementById('chipPayType').textContent = pos.payType;
+      if (pos.payType === 'Hourly') {
+        document.getElementById('chipPayRange').textContent = '$' + pos.min + '/hr \u2013 $' + pos.max + '/hr';
+      } else {
+        document.getElementById('chipPayRange').textContent = '$' + pos.min.toLocaleString() + '/yr \u2013 $' + pos.max.toLocaleString() + '/yr';
+      }
+      infoEl.style.display = 'flex';
+
+      // Configure pay slider
+      const slider = document.getElementById('paySlider');
+      slider.min = pos.min;
+      slider.max = pos.max;
+      slider.step = pos.step;
+      slider.value = pos.min;
+      sliderGroup.style.display = 'block';
+
+      // Salaried positions: lock hours to 37.5 and disable slider
+      if (pos.payType === 'Salaried') {
+        hoursSlider.value = 37.5;
+        hoursSlider.disabled = true;
+        hoursGroup.classList.add('slider-disabled');
+      } else {
+        hoursSlider.disabled = false;
+        hoursGroup.classList.remove('slider-disabled');
+      }
+
+      updatePaySliderDisplay();
+      updateHoursSliderDisplay();
+      calculate();
+    });
+
+    // =============================================
+    // Pay Slider Handler
+    // =============================================
+    function updatePaySliderDisplay() {
+      const key = document.getElementById('positionName').value;
+      if (!key || !POSITIONS[key]) return;
+
+      const pos = POSITIONS[key];
+      const val = parseFloat(document.getElementById('paySlider').value);
+      const valueEl = document.getElementById('paySliderValue');
+
+      if (pos.payType === 'Hourly') {
+        valueEl.innerHTML = '$' + val.toFixed(2) + ' <span class="unit">/hr</span>';
+        document.getElementById('paySliderMin').textContent = '$' + pos.min + '/hr';
+        document.getElementById('paySliderMax').textContent = '$' + pos.max + '/hr';
+      } else {
+        valueEl.innerHTML = '$' + val.toLocaleString('en-US') + ' <span class="unit">/yr</span>';
+        document.getElementById('paySliderMin').textContent = '$' + pos.min.toLocaleString() + '/yr';
+        document.getElementById('paySliderMax').textContent = '$' + pos.max.toLocaleString() + '/yr';
+      }
+    }
+
+    document.getElementById('paySlider').addEventListener('input', function() {
+      updatePaySliderDisplay();
+      calculate();
+    });
+
+    // =============================================
+    // Hours Slider Handler
+    // =============================================
+    function updateHoursSliderDisplay() {
+      const hours = parseFloat(document.getElementById('hoursSlider').value);
+      document.getElementById('hoursSliderValue').innerHTML = hours.toFixed(1) + ' <span class="unit">hrs/wk</span>';
+
+      const badge = document.getElementById('ftptBadge');
+
+      if (hours === 37.5) {
+        badge.textContent = 'Full-Time';
+        badge.className = 'ftpt-badge full-time';
+      } else if (hours > 17.5) {
+        badge.textContent = 'Part-Time >17.5';
+        badge.className = 'ftpt-badge part-time-high';
+      } else {
+        badge.textContent = 'Part-Time \u226417.5';
+        badge.className = 'ftpt-badge part-time-low';
+      }
+      badge.style.display = 'inline-block';
+    }
+
+    document.getElementById('hoursSlider').addEventListener('input', function() {
+      updateHoursSliderDisplay();
+      calculate();
+    });
+
+    // Initialize hours display
+    updateHoursSliderDisplay();
+
+    // =============================================
+    // Main Calculation
+    // =============================================
+    function calculate() {
+      const posKey = document.getElementById('positionName').value;
+      const startVal = document.getElementById('startDate').value;
+      const endVal = document.getElementById('endDate').value;
+      const benefitRate = (parseFloat(document.getElementById('benefitRate').value) || 0) / 100;
+      const housingMonthly = parseFloat(document.getElementById('housingMonthly').value) || 0;
+      const hoursPerWeek = parseFloat(document.getElementById('hoursSlider').value) || 37.5;
+
+      const waiting = document.getElementById('resultsWaiting');
+      const content = document.getElementById('resultsContent');
+
+      if (!posKey || !POSITIONS[posKey] || !startVal || !endVal) {
+        waiting.style.display = 'block';
+        content.style.display = 'none';
+        return;
+      }
+
+      const pos = POSITIONS[posKey];
+
+      const startDate = new Date(startVal + 'T00:00:00');
+      const endDate = new Date(endVal + 'T00:00:00');
+
+      if (endDate <= startDate) {
+        waiting.textContent = 'End date must be after start date.';
+        waiting.style.display = 'block';
+        content.style.display = 'none';
+        return;
+      }
+
+      waiting.style.display = 'none';
+      content.style.display = 'block';
+
+      // --- Compute values ---
+
+      // Calendar days (inclusive)
+      const totalCalendarDays = Math.round((endDate - startDate) / 86400000) + 1;
+
+      // Working days (Sun–Thu)
+      const workingDays = countWorkingDays(startDate, endDate);
+
+      // Hourly rate
+      let hourlyRate;
+      const payValue = parseFloat(document.getElementById('paySlider').value);
+      if (pos.payType === 'Hourly') {
+        hourlyRate = payValue;
+      } else {
+        // Salaried: annual / 1950
+        hourlyRate = payValue / ANNUAL_HOURS;
+      }
+
+      // Hours per day
+      const hoursPerDay = hoursPerWeek / 5;
+
+      // Base salary = hourly_rate x hours_per_day x working_days
+      const baseSalary = hourlyRate * hoursPerDay * workingDays;
+
+      // Benefits
+      const totalBenefits = baseSalary * benefitRate;
+
+      // Subtotal
+      const subSalaryBenefits = baseSalary + totalBenefits;
+
+      // Housing
+      const isEligibleHousing = hoursPerWeek > 17.5;
+      const effectiveHousingRate = isEligibleHousing ? housingMonthly : 0;
+      const totalHousing = isEligibleHousing ? calculateHousing(startDate, endDate, housingMonthly) : 0;
+
+      // Total
+      const totalCost = subSalaryBenefits + totalHousing;
+
+      // --- Duration text ---
+      const totalMonthsApprox = totalCalendarDays / 30.44;
+      const fullMonths = Math.floor(totalMonthsApprox);
+      const remainDays = Math.round(totalCalendarDays - (fullMonths * 30.44));
+      let durationText;
+      if (fullMonths >= 12) {
+        const yrs = Math.floor(fullMonths / 12);
+        const mos = fullMonths % 12;
+        durationText = yrs + (yrs === 1 ? ' year' : ' years');
+        if (mos > 0) durationText += ', ' + mos + (mos === 1 ? ' month' : ' months');
+      } else {
+        durationText = fullMonths + (fullMonths === 1 ? ' month' : ' months');
+        if (remainDays > 0) durationText += ', ' + remainDays + (remainDays === 1 ? ' day' : ' days');
+      }
+
+      const startStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const endStr = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      durationText += ' (' + startStr + ' \u2013 ' + endStr + ')';
+
+      // Avg monthly salary (base salary / approx months)
+      const avgMonthlySalary = totalMonthsApprox > 0 ? baseSalary / totalMonthsApprox : 0;
+      const avgMonthlyCost = totalMonthsApprox > 0 ? totalCost / totalMonthsApprox : 0;
+
+      // --- Populate results ---
+
+      // Contract Duration
+      document.getElementById('resDuration').textContent = durationText;
+      document.getElementById('resDuration').colSpan = 2;
+
+      // Working Days
+      document.getElementById('resWorkingDays').textContent = workingDays + ' days (' + totalCalendarDays + ' calendar days)';
+      document.getElementById('resWorkingDays').colSpan = 2;
+
+      // Effective Hourly Rate
+      document.getElementById('resHoursNote').textContent = hoursPerDay.toFixed(1) + ' hrs/day \u00d7 ' + workingDays + ' working days';
+      document.getElementById('resHourlyRateUSD').textContent = fmtUSD(hourlyRate) + '/hr';
+      document.getElementById('resHourlyRateQAR').textContent = fmtQAR(toQAR(hourlyRate)) + '/hr';
+
+      // Base Salary
+      document.getElementById('resBaseNote').textContent =
+        fmtUSD(hourlyRate) + '/hr \u00d7 ' + hoursPerDay.toFixed(1) + ' hrs/day \u00d7 ' + workingDays + ' days';
+      document.getElementById('resBaseSalaryUSD').textContent = fmtUSD(baseSalary);
+      document.getElementById('resBaseSalaryQAR').textContent = fmtQAR(toQAR(baseSalary));
+
+      // Benefits
+      document.getElementById('resBenefitNote').textContent = (benefitRate * 100).toFixed(1) + '% of base salary';
+      document.getElementById('resBenefitsUSD').textContent = fmtUSD(totalBenefits);
+      document.getElementById('resBenefitsQAR').textContent = fmtQAR(toQAR(totalBenefits));
+
+      // Subtotal
+      document.getElementById('resSubSalaryUSD').textContent = fmtUSD(subSalaryBenefits);
+      document.getElementById('resSubSalaryQAR').textContent = fmtQAR(toQAR(subSalaryBenefits));
+
+      // Housing
+      if (!isEligibleHousing) {
+        document.getElementById('resHousingNote').textContent = 'Not eligible (\u2264 17.5 hrs/wk)';
+      } else {
+        document.getElementById('resHousingNote').textContent = '$' + housingMonthly.toLocaleString() + '/mo, prorated by calendar days';
+      }
+      document.getElementById('resHousingUSD').textContent = fmtUSD(totalHousing);
+      document.getElementById('resHousingQAR').textContent = fmtQAR(toQAR(totalHousing));
+
+      // Total
+      document.getElementById('resTotalUSD').textContent = fmtUSD(totalCost);
+      document.getElementById('resTotalQAR').textContent = fmtQAR(toQAR(totalCost));
+
+      // Summary boxes
+      document.getElementById('sumMonthlySalaryUSD').textContent = fmtUSDRound(avgMonthlySalary);
+      document.getElementById('sumMonthlySalaryQAR').textContent = fmtQARRound(toQAR(avgMonthlySalary));
+      document.getElementById('sumMonthlyCostUSD').textContent = fmtUSDRound(avgMonthlyCost);
+      document.getElementById('sumMonthlyCostQAR').textContent = fmtQARRound(toQAR(avgMonthlyCost));
+      document.getElementById('sumTotalUSD').textContent = fmtUSDRound(totalCost);
+      document.getElementById('sumTotalQAR').textContent = fmtQARRound(toQAR(totalCost));
+    }
+
+    // =============================================
+    // Reset
+    // =============================================
+    function resetForm() {
+      document.getElementById('positionName').value = '';
+      document.getElementById('positionInfo').style.display = 'none';
+      document.getElementById('paySliderGroup').style.display = 'none';
+      document.getElementById('paySlider').value = 0;
+      document.getElementById('paySliderValue').textContent = '\u2014';
+      document.getElementById('hoursSlider').value = 37.5;
+      document.getElementById('hoursSlider').disabled = false;
+      document.getElementById('hoursSliderGroup').classList.remove('slider-disabled');
+      updateHoursSliderDisplay();
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      document.getElementById('benefitRate').value = '36.6';
+      document.getElementById('housingMonthly').value = '2740';
+      document.getElementById('dateWarning').style.display = 'none';
+      document.getElementById('resultsWaiting').style.display = 'block';
+      document.getElementById('resultsContent').style.display = 'none';
+      document.getElementById('resultsWaiting').textContent = 'Select a position, start date, and end date above to see the budget estimate.';
+    }
+
+    // =============================================
+    // Listen to all inputs
+    // =============================================
+    document.querySelectorAll('#positionName, #startDate, #endDate, #benefitRate, #housingMonthly').forEach(function(el) {
+      el.addEventListener('input', calculate);
+      el.addEventListener('change', calculate);
+    });
+
+    // Date validation on change
+    document.getElementById('startDate').addEventListener('change', validateDates);
+    document.getElementById('endDate').addEventListener('change', validateDates);
+  </script>
+</body>
+</html>
