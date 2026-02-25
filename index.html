@@ -1046,26 +1046,45 @@
       // Total
       const totalCost = subSalaryBenefits + totalHousing;
 
-      // --- Duration text ---
-      const totalMonthsApprox = totalCalendarDays / 30.44;
-      const fullMonths = Math.floor(totalMonthsApprox);
-      const remainDays = Math.round(totalCalendarDays - (fullMonths * 30.44));
-      let durationText;
-      if (fullMonths >= 12) {
-        const yrs = Math.floor(fullMonths / 12);
-        const mos = fullMonths % 12;
-        durationText = yrs + (yrs === 1 ? ' year' : ' years');
-        if (mos > 0) durationText += ', ' + mos + (mos === 1 ? ' month' : ' months');
-      } else {
-        durationText = fullMonths + (fullMonths === 1 ? ' month' : ' months');
-        if (remainDays > 0) durationText += ', ' + remainDays + (remainDays === 1 ? ' day' : ' days');
+      // --- Duration text (calendar-month counting with exclusive end) ---
+      // Use day-after-endDate so inclusive ranges like Mar 1–Aug 31 = 6 months
+      const exEnd = new Date(endDate);
+      exEnd.setDate(exEnd.getDate() + 1);
+
+      const startDay = startDate.getDate();
+      let fullMonths = 0;
+      let cursor = new Date(startDate);
+
+      while (true) {
+        let nextMonth = cursor.getMonth() + 1;
+        let nextYear = cursor.getFullYear();
+        if (nextMonth > 11) { nextMonth = 0; nextYear++; }
+        // Clamp day to last day of target month (e.g. Jan 31 → Feb 28)
+        const daysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+        const targetDay = Math.min(startDay, daysInNextMonth);
+        const next = new Date(nextYear, nextMonth, targetDay);
+        if (next > exEnd) break;
+        fullMonths++;
+        cursor = next;
       }
+
+      const remainDays = Math.round((exEnd - cursor) / 86400000);
+
+      let durationText;
+      const yrs = Math.floor(fullMonths / 12);
+      const mos = fullMonths % 12;
+      const parts = [];
+      if (yrs > 0) parts.push(yrs + (yrs === 1 ? ' year' : ' years'));
+      if (mos > 0) parts.push(mos + (mos === 1 ? ' month' : ' months'));
+      if (remainDays > 0) parts.push(remainDays + (remainDays === 1 ? ' day' : ' days'));
+      durationText = parts.length > 0 ? parts.join(', ') : '0 days';
 
       const startStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const endStr = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       durationText += ' (' + startStr + ' \u2013 ' + endStr + ')';
 
-      // Avg monthly salary (base salary / approx months)
+      // Avg monthly (use calendar days for averages)
+      const totalMonthsApprox = totalCalendarDays / 30.44;
       const avgMonthlySalary = totalMonthsApprox > 0 ? baseSalary / totalMonthsApprox : 0;
       const avgMonthlyCost = totalMonthsApprox > 0 ? totalCost / totalMonthsApprox : 0;
 
