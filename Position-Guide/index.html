@@ -426,6 +426,16 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .role-summary {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--cmu-gray-medium);
+      padding: 0 0 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--cmu-gray-light);
+      line-height: 1.5;
+    }
+
     .role-detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -585,6 +595,13 @@
           </thead>
           <tbody>
             <tr>
+              <td>Job Profile Code</td>
+              <td>4550</td>
+              <td>4551</td>
+              <td>4552</td>
+              <td>4553</td>
+            </tr>
+            <tr>
               <td>Level</td>
               <td><span class="level-badge entry">Entry</span></td>
               <td><span class="level-badge mid">Early-Career</span></td>
@@ -613,39 +630,32 @@
               <td>$45k &ndash; $63k/yr</td>
             </tr>
             <tr>
-              <td>Typical Education</td>
-              <td>Bachelor's (or enrolled)</td>
-              <td>Bachelor's degree</td>
-              <td>Master's or equiv. experience</td>
-              <td>Master's / PhD preferred</td>
+              <td>Education</td>
+              <td>High School / GED</td>
+              <td>Bachelor's Degree</td>
+              <td>Bachelor's Degree</td>
+              <td>Master's Degree</td>
             </tr>
             <tr>
               <td>Experience</td>
-              <td>0 &ndash; 1 years</td>
+              <td>0 &ndash; 1 year</td>
               <td>1 &ndash; 3 years</td>
               <td>3 &ndash; 5 years</td>
-              <td>5+ years</td>
+              <td>1 &ndash; 3 years</td>
             </tr>
             <tr>
-              <td>Supervision Needed</td>
-              <td>Close, day-to-day</td>
-              <td>Regular guidance</td>
-              <td>Minimal &mdash; works independently</td>
-              <td>Self-directed</td>
+              <td>Supervision</td>
+              <td>Follows research plans under direct supervision</td>
+              <td>Regular guidance; increasing independence</td>
+              <td>General supervision; leads project portions</td>
+              <td>Independent; may manage lab operations</td>
             </tr>
             <tr>
-              <td>Leads Others?</td>
-              <td>No</td>
-              <td>May guide students</td>
-              <td>Supervises junior staff</td>
-              <td>Mentors entire team</td>
-            </tr>
-            <tr>
-              <td>Publications</td>
-              <td>Assists with drafts</td>
-              <td>Contributes to papers</td>
-              <td>Co-authors publications</td>
-              <td>Primary / co-author, leads proposals</td>
+              <td>Key Skills</td>
+              <td>Data collection, data entry, record management</td>
+              <td>Analytical skills, problem-solving &amp; reasoning</td>
+              <td>Communication, analytical, problem-solving</td>
+              <td>Project management, communication, analytical</td>
             </tr>
             <tr>
               <td>FT/PT</td>
@@ -669,23 +679,23 @@
 
         <!-- Q1: Education -->
         <div class="question-block">
-          <div class="question-text">1. What is the minimum education level you require?</div>
+          <div class="question-text">1. What is the minimum education level required for this role?</div>
           <div class="answer-options" data-question="education">
             <label class="answer-option">
               <input type="radio" name="q_education" value="1">
-              <span class="option-label">Currently enrolled in a Bachelor's program, or Bachelor's degree</span>
+              <span class="option-label">High School diploma / GED (or currently enrolled in a degree program)</span>
             </label>
             <label class="answer-option">
               <input type="radio" name="q_education" value="2">
-              <span class="option-label">Bachelor's degree with some research experience</span>
+              <span class="option-label">Bachelor's Degree</span>
             </label>
             <label class="answer-option">
               <input type="radio" name="q_education" value="3">
-              <span class="option-label">Master's degree (or equivalent years of research experience)</span>
+              <span class="option-label">Bachelor's Degree with significant research experience (3+ years)</span>
             </label>
             <label class="answer-option">
               <input type="radio" name="q_education" value="4">
-              <span class="option-label">Master's or PhD with a strong research track record</span>
+              <span class="option-label">Master's Degree or higher</span>
             </label>
           </div>
         </div>
@@ -755,13 +765,13 @@
 
     <div class="role-cards">
 
-      <!-- Research Assistant -->
+      <!-- Research Assistant (4550) -->
       <div class="role-card level-ra" data-role="RA">
         <div class="role-card-header" onclick="toggleCard(this)">
           <div class="role-card-left">
             <div class="role-grade">53</div>
             <div class="role-card-title">
-              <h3>Research Assistant</h3>
+              <h3>Research Assistant <span style="font-weight:400;font-size:13px;color:var(--cmu-gray-medium);">(4550)</span></h3>
               <div class="role-meta">
                 <span>Hourly &middot; $15 &ndash; $20/hr</span>
                 <span><span class="level-badge entry">Entry Level</span></span>
@@ -771,46 +781,49 @@
           <span class="chevron">&#9660;</span>
         </div>
         <div class="role-card-body">
+          <div class="role-summary">
+            Follows research plans in order to collect, record and manipulate research data. Maintains accurate and detailed research records.
+          </div>
           <div class="role-detail-grid">
             <div class="role-detail-box">
-              <h4>Typical Qualifications</h4>
+              <h4>Education &amp; Experience</h4>
               <ul>
-                <li>Currently enrolled in or recently completed a Bachelor's degree</li>
-                <li>0 &ndash; 1 years of research experience</li>
-                <li>Familiarity with basic research tools and methods</li>
+                <li><strong>Education:</strong> High School diploma or GED</li>
+                <li><strong>Experience:</strong> 0 &ndash; 1 year</li>
+                <li><strong>Prior experience in:</strong> Research, data collection, data entry, record management</li>
               </ul>
             </div>
             <div class="role-detail-box">
               <h4>Supervision &amp; Independence</h4>
               <ul>
-                <li>Works under close, day-to-day supervision of the PI</li>
-                <li>Follows detailed instructions for all tasks</li>
+                <li>Follows research plans under direct supervision of the PI</li>
+                <li>Works under close, day-to-day guidance</li>
                 <li>Does not supervise others</li>
               </ul>
             </div>
           </div>
           <div class="role-duties">
-            <h4>Key Duties</h4>
+            <h4>Job Responsibilities</h4>
             <ul>
-              <li>Assisting with experimental design, data collection, and lab or computational work as directed</li>
-              <li>Maintaining organized records of research data, procedures, and results</li>
-              <li>Conducting literature reviews and summarizing findings</li>
-              <li>Preparing samples, materials, or datasets for analysis</li>
-              <li>Operating and maintaining research equipment and software tools</li>
-              <li>Assisting with preparation of reports, presentations, and manuscript drafts</li>
-              <li>Ensuring compliance with safety protocols and research ethics guidelines</li>
+              <li>Following research plans to collect, record, and manipulate research data</li>
+              <li>Maintaining accurate and detailed research records and files</li>
+              <li>Performing basic data analysis to produce reports</li>
+              <li>Documenting results and processes</li>
+              <li>May test software prototypes</li>
+              <li>May interact with research subjects to perform job functions</li>
+              <li>Performing related duties as assigned</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- Research Associate I -->
+      <!-- Research Associate I (4551) -->
       <div class="role-card level-rai" data-role="RAI">
         <div class="role-card-header" onclick="toggleCard(this)">
           <div class="role-card-left">
             <div class="role-grade">55</div>
             <div class="role-card-title">
-              <h3>Research Associate I</h3>
+              <h3>Research Associate I <span style="font-weight:400;font-size:13px;color:var(--cmu-gray-medium);">(4551)</span></h3>
               <div class="role-meta">
                 <span>Hourly &middot; $17 &ndash; $24/hr</span>
                 <span><span class="level-badge mid">Early-Career</span></span>
@@ -820,46 +833,51 @@
           <span class="chevron">&#9660;</span>
         </div>
         <div class="role-card-body">
+          <div class="role-summary">
+            Assists in the development and execution of research projects including experiment design, analysis of data collected and writing up experiment results.
+          </div>
           <div class="role-detail-grid">
             <div class="role-detail-box">
-              <h4>Typical Qualifications</h4>
+              <h4>Education &amp; Experience</h4>
               <ul>
-                <li>Bachelor's degree in a relevant field</li>
-                <li>1 &ndash; 3 years of research experience</li>
-                <li>Proficiency with standard research tools and methods</li>
+                <li><strong>Education:</strong> Bachelor's Degree</li>
+                <li><strong>Experience:</strong> 1 &ndash; 3 years</li>
+                <li><strong>Prior experience in:</strong> Research, research lab, research methodology, data collection &amp; analysis</li>
               </ul>
             </div>
             <div class="role-detail-box">
-              <h4>Supervision &amp; Independence</h4>
+              <h4>Key Skills Required</h4>
               <ul>
-                <li>Works with regular PI guidance, with increasing independence</li>
-                <li>May provide guidance to student assistants</li>
-                <li>Participates in research group meetings</li>
+                <li>Problem-solving and reasoning skills</li>
+                <li>Analytical skills</li>
+                <li>Proficiency with software packages for data manipulation</li>
               </ul>
             </div>
           </div>
           <div class="role-duties">
-            <h4>Key Duties</h4>
+            <h4>Job Responsibilities</h4>
             <ul>
-              <li>Designing and conducting experiments, simulations, or analyses</li>
-              <li>Collecting, processing, and analyzing research data</li>
-              <li>Contributing to development and refinement of research protocols</li>
-              <li>Preparing technical reports, visualizations, and documentation</li>
-              <li>Assisting with publications, conference papers, and grant proposals</li>
-              <li>Maintaining and troubleshooting research equipment and systems</li>
-              <li>Mentoring junior research staff or student assistants as needed</li>
+              <li>Using a variety of software packages to input, manipulate, collect and record results or observations</li>
+              <li>Performing research experiments following experimental protocol and procedures</li>
+              <li>Researching and documenting information; compiling and maintaining accurate and detailed records</li>
+              <li>Summarizing statistical information for analysis, examination or presentation</li>
+              <li>Writing technical reports</li>
+              <li>May build and validate quantitative models</li>
+              <li>Identifying problems and obstacles to progress; developing strategies to solve problems</li>
+              <li>May program software in support of job functions</li>
+              <li>Attending project meetings</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- Research Associate II -->
+      <!-- Research Associate II (4552) -->
       <div class="role-card level-raii" data-role="RAII">
         <div class="role-card-header" onclick="toggleCard(this)">
           <div class="role-card-left">
             <div class="role-grade">56</div>
             <div class="role-card-title">
-              <h3>Research Associate II</h3>
+              <h3>Research Associate II <span style="font-weight:400;font-size:13px;color:var(--cmu-gray-medium);">(4552)</span></h3>
               <div class="role-meta">
                 <span>Hourly &middot; $20 &ndash; $27/hr</span>
                 <span><span class="level-badge senior">Mid-Career</span></span>
@@ -869,46 +887,51 @@
           <span class="chevron">&#9660;</span>
         </div>
         <div class="role-card-body">
+          <div class="role-summary">
+            Under general supervision, designs experiments and research protocols. Performs complex analysis to report results.
+          </div>
           <div class="role-detail-grid">
             <div class="role-detail-box">
-              <h4>Typical Qualifications</h4>
+              <h4>Education &amp; Experience</h4>
               <ul>
-                <li>Master's degree or equivalent research experience</li>
-                <li>3 &ndash; 5 years of demonstrated research experience</li>
-                <li>Strong analytical and problem-solving skills</li>
+                <li><strong>Education:</strong> Bachelor's Degree</li>
+                <li><strong>Experience:</strong> 3 &ndash; 5 years</li>
+                <li><strong>Prior experience in:</strong> Data collection &amp; analysis, research methodology, research lab, research</li>
               </ul>
             </div>
             <div class="role-detail-box">
-              <h4>Supervision &amp; Independence</h4>
+              <h4>Key Skills Required</h4>
               <ul>
-                <li>Works independently with minimal oversight</li>
-                <li>Supervises and mentors junior staff, RAs, and students</li>
-                <li>Collaborates with internal and external partners</li>
+                <li>Oral and written communication skills</li>
+                <li>Analytical skills</li>
+                <li>Problem-solving and reasoning skills</li>
               </ul>
             </div>
           </div>
           <div class="role-duties">
-            <h4>Key Duties</h4>
+            <h4>Job Responsibilities</h4>
             <ul>
-              <li>Independently designing, conducting, and analyzing experiments or computational studies</li>
-              <li>Developing and optimizing research methodologies and analytical frameworks</li>
-              <li>Leading specific research tasks or sub-projects with associated timelines</li>
-              <li>Performing advanced data analysis, statistical modeling, or computational work</li>
-              <li>Co-authoring peer-reviewed publications, reports, and conference presentations</li>
-              <li>Writing sections of grant proposals and assisting with budget planning</li>
-              <li>Supervising junior research staff and student researchers</li>
+              <li>Designing experiments and research protocols with some supervision</li>
+              <li>Collecting, verifying and managing data</li>
+              <li>Performing data analysis to produce reports; documenting and processing results</li>
+              <li>Developing quantitative models</li>
+              <li>Contributing to overall project planning; acting as lead to coordinate portions of a large project or study</li>
+              <li>Ensuring project deadlines are met</li>
+              <li>Writing and editing recommendations and reports</li>
+              <li>Maintaining administrative records; tracking and adhering to established budgets</li>
+              <li>May program software in support of job functions</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- Research Associate III -->
+      <!-- Research Associate III (4553) -->
       <div class="role-card level-raiii" data-role="RAIII">
         <div class="role-card-header" onclick="toggleCard(this)">
           <div class="role-card-left">
             <div class="role-grade">58</div>
             <div class="role-card-title">
-              <h3>Research Associate III</h3>
+              <h3>Research Associate III <span style="font-weight:400;font-size:13px;color:var(--cmu-gray-medium);">(4553)</span></h3>
               <div class="role-meta">
                 <span>Salaried &middot; $45k &ndash; $63k/yr</span>
                 <span><span class="level-badge lead">Senior / Lead</span></span>
@@ -918,34 +941,51 @@
           <span class="chevron">&#9660;</span>
         </div>
         <div class="role-card-body">
+          <div class="role-summary">
+            Independently designs experiments and research protocols. Independently sets up and performs sound experimental procedures. May perform lab management functions.
+          </div>
           <div class="role-detail-grid">
             <div class="role-detail-box">
-              <h4>Typical Qualifications</h4>
+              <h4>Education &amp; Experience</h4>
               <ul>
-                <li>Master's degree or PhD preferred</li>
-                <li>5+ years of extensive research experience</li>
-                <li>Strong publication record and proven leadership ability</li>
+                <li><strong>Education:</strong> Master's Degree</li>
+                <li><strong>Experience:</strong> 1 &ndash; 3 years</li>
+                <li><strong>Prior experience in:</strong> Research, research lab, research methodology, data collection &amp; analysis</li>
               </ul>
             </div>
             <div class="role-detail-box">
-              <h4>Supervision &amp; Independence</h4>
+              <h4>Key Skills Required</h4>
               <ul>
-                <li>Self-directed; provides scientific and technical leadership</li>
-                <li>Mentors and supervises associates, assistants, and grad students</li>
-                <li>Represents the research group externally</li>
+                <li>Project management skills</li>
+                <li>Problem-solving and reasoning skills</li>
+                <li>Analytical skills</li>
+                <li>Oral and written communication skills</li>
               </ul>
             </div>
           </div>
           <div class="role-duties">
-            <h4>Key Duties</h4>
+            <h4>Job Responsibilities</h4>
             <ul>
-              <li>Leading design, execution, and management of complex research projects</li>
-              <li>Developing novel research methodologies and analytical approaches</li>
-              <li>Serving as primary or co-author on peer-reviewed publications</li>
-              <li>Leading preparation of grant proposals, including budget development</li>
-              <li>Managing project timelines, deliverables, and institutional coordination</li>
-              <li>Representing the group in meetings with funding agencies and review panels</li>
-              <li>Contributing to strategic planning for the research group's direction</li>
+              <li>Independently designing experiments and research protocols</li>
+              <li>Independently setting up and performing sound experimental procedures</li>
+              <li>Suggesting improvements in research methodology</li>
+              <li>Collecting, verifying and managing data; developing data analysis methods and protocols</li>
+              <li>Performing complex and original data analysis to produce reports</li>
+              <li>May develop computational modeling methods</li>
+              <li>May manage IRB approval process and document IRB policies</li>
+              <li>May program software in support of job functions</li>
+            </ul>
+          </div>
+          <div class="role-duties" style="margin-top: 12px;">
+            <h4>Lab Management Functions (if applicable)</h4>
+            <ul>
+              <li>Adhering to established lab budget and providing input to budget planning</li>
+              <li>Supervising purchasing and planning capital expenditures</li>
+              <li>Establishing and enforcing safety policies and procedures</li>
+              <li>Ensuring regulatory requirements are adhered to</li>
+              <li>Establishing policies and supervising the maintenance of administrative records</li>
+              <li>Supervising lab employees including assignment of day-to-day duties</li>
+              <li>Assisting with hiring</li>
             </ul>
           </div>
         </div>
@@ -954,8 +994,8 @@
 
     <!-- Action Bar -->
     <div class="action-bar">
-      <a href="https://cmuq.jotform.com/260543027759057" class="primary">Start Position Requisition (Form 1)</a>
-      <a href="https://qsibtain.github.io/cmuq-human-resources/" class="secondary">Open Budget Calculator</a>
+      <a href="index.html" class="primary">Start Position Requisition (Form 1)</a>
+      <a href="budget-calculator.html" class="secondary">Open Budget Calculator</a>
     </div>
 
   </div>
