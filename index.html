@@ -521,6 +521,13 @@
 
   <div class="container">
 
+    <div class="info-banner" style="background: #FFF8E1; border-color: #FFD54F;">
+      <div class="icon" style="background: #E65100;">!</div>
+      <div>
+        <strong style="color: #E65100;">Internal Funds Only.</strong> This budget calculator is designed for research hires on internal funds. If you are hiring on an external research grant (i.e. QRDI funded), this calculator does not cover all eventual budget considerations. Please work with the Research Office to understand your budget needs.
+      </div>
+    </div>
+
     <div class="info-banner">
       <div class="icon">i</div>
       <div>
@@ -542,10 +549,12 @@
             <label for="positionName">Position Name</label>
             <select id="positionName">
               <option value="">Select position...</option>
+              <option value="SRA">Student Research Assistant</option>
               <option value="RA">Research Assistant</option>
               <option value="RAI">Research Associate I</option>
               <option value="RAII">Research Associate II</option>
               <option value="RAIII">Research Associate III</option>
+              <option value="POSTDOC">Post-Doctoral Researcher</option>
             </select>
           </div>
         </div>
@@ -581,6 +590,7 @@
             <span>1 hr</span>
             <span>37.5 hrs</span>
           </div>
+          <div class="field-hint" id="hoursHint" style="display: none; margin-top: 6px; padding: 6px 10px; background: #FFF8E1; border: 1px solid #FFD54F; border-radius: 4px; color: #6D4C00;"></div>
         </div>
 
         <!-- Start Date + End Date -->
@@ -745,10 +755,12 @@
     // Position Data
     // =============================================
     const POSITIONS = {
-      RA:    { name: 'Research Assistant',     grade: 53, payType: 'Hourly',   min: 15,    max: 20,    step: 0.25, unit: '/hr'  },
-      RAI:   { name: 'Research Associate I',   grade: 55, payType: 'Hourly',   min: 17,    max: 24,    step: 0.25, unit: '/hr'  },
-      RAII:  { name: 'Research Associate II',  grade: 56, payType: 'Hourly',   min: 20,    max: 27,    step: 0.25, unit: '/hr'  },
-      RAIII: { name: 'Research Associate III', grade: 58, payType: 'Salaried', min: 45000, max: 63000, step: 500,  unit: '/yr'  }
+      SRA:     { name: 'Student Research Assistant', grade: null, payType: 'Hourly',   min: 12,    max: 12,    step: 0,    unit: '/hr', fixedRate: true, noBenefits: true, noAllowances: true },
+      RA:      { name: 'Research Assistant',         grade: 53,   payType: 'Hourly',   min: 15,    max: 20,    step: 0.25, unit: '/hr'  },
+      RAI:     { name: 'Research Associate I',       grade: 55,   payType: 'Hourly',   min: 17,    max: 24,    step: 0.25, unit: '/hr'  },
+      RAII:    { name: 'Research Associate II',      grade: 56,   payType: 'Hourly',   min: 20,    max: 27,    step: 0.25, unit: '/hr'  },
+      RAIII:   { name: 'Research Associate III',     grade: 58,   payType: 'Salaried', min: 45000, max: 63000, step: 500,  unit: '/yr'  },
+      POSTDOC: { name: 'Post-Doctoral Researcher',  grade: null, payType: 'Salaried', min: 61008, max: 80000, step: 500,  unit: '/yr'  }
     };
 
     // =============================================
@@ -884,9 +896,11 @@
       const pos = POSITIONS[key];
 
       // Show info chips
-      document.getElementById('chipGrade').textContent = pos.grade;
+      document.getElementById('chipGrade').textContent = pos.grade !== null ? pos.grade : 'N/A';
       document.getElementById('chipPayType').textContent = pos.payType;
-      if (pos.payType === 'Hourly') {
+      if (pos.fixedRate) {
+        document.getElementById('chipPayRange').textContent = '$' + pos.min + '/hr (fixed)';
+      } else if (pos.payType === 'Hourly') {
         document.getElementById('chipPayRange').textContent = '$' + pos.min + '/hr \u2013 $' + pos.max + '/hr';
       } else {
         document.getElementById('chipPayRange').textContent = '$' + pos.min.toLocaleString() + '/yr \u2013 $' + pos.max.toLocaleString() + '/yr';
@@ -895,13 +909,43 @@
 
       // Configure pay slider
       const slider = document.getElementById('paySlider');
-      slider.min = pos.min;
-      slider.max = pos.max;
-      slider.step = pos.step;
-      slider.value = pos.min;
-      sliderGroup.style.display = 'block';
+      if (pos.fixedRate) {
+        // Fixed rate — hide the slider, value is always pos.min
+        slider.min = pos.min;
+        slider.max = pos.min;
+        slider.value = pos.min;
+        sliderGroup.style.display = 'none';
+      } else {
+        slider.min = pos.min;
+        slider.max = pos.max;
+        slider.step = pos.step;
+        slider.value = pos.min;
+        sliderGroup.style.display = 'block';
+      }
 
-      // Salaried positions: lock hours to 37.5 and disable slider
+      // Benefits & allowances fields
+      const benefitInput = document.getElementById('benefitRate');
+      const housingInput = document.getElementById('housingMonthly');
+      if (pos.noBenefits) {
+        benefitInput.value = '0';
+        benefitInput.disabled = true;
+        benefitInput.style.background = '#F5F5F5';
+      } else {
+        benefitInput.value = '36.6';
+        benefitInput.disabled = false;
+        benefitInput.style.background = '';
+      }
+      if (pos.noAllowances) {
+        housingInput.value = '0';
+        housingInput.disabled = true;
+        housingInput.style.background = '#F5F5F5';
+      } else {
+        housingInput.value = '2740';
+        housingInput.disabled = false;
+        housingInput.style.background = '';
+      }
+
+      // Hours slider: Salaried positions lock to 37.5 FT
       if (pos.payType === 'Salaried') {
         hoursSlider.value = 37.5;
         hoursSlider.disabled = true;
@@ -909,6 +953,15 @@
       } else {
         hoursSlider.disabled = false;
         hoursGroup.classList.remove('slider-disabled');
+      }
+
+      // Student hours hint
+      const hoursHint = document.getElementById('hoursHint');
+      if (key === 'SRA') {
+        hoursHint.textContent = 'Undergraduate students may work up to 20 hours/week aggregate during term time and up to 37.5 hours/week during breaks.';
+        hoursHint.style.display = 'block';
+      } else {
+        hoursHint.style.display = 'none';
       }
 
       updatePaySliderDisplay();
@@ -927,7 +980,10 @@
       const val = parseFloat(document.getElementById('paySlider').value);
       const valueEl = document.getElementById('paySliderValue');
 
-      if (pos.payType === 'Hourly') {
+      if (pos.fixedRate) {
+        // Fixed rate — slider is hidden but we still set the display value
+        valueEl.innerHTML = '$' + pos.min.toFixed(2) + ' <span class="unit">/hr (fixed)</span>';
+      } else if (pos.payType === 'Hourly') {
         valueEl.innerHTML = '$' + val.toFixed(2) + ' <span class="unit">/hr</span>';
         document.getElementById('paySliderMin').textContent = '$' + pos.min + '/hr';
         document.getElementById('paySliderMax').textContent = '$' + pos.max + '/hr';
@@ -1018,7 +1074,12 @@
 
       // Hourly rate
       let hourlyRate;
-      const payValue = parseFloat(document.getElementById('paySlider').value);
+      let payValue;
+      if (pos.fixedRate) {
+        payValue = pos.min;
+      } else {
+        payValue = parseFloat(document.getElementById('paySlider').value);
+      }
       if (pos.payType === 'Hourly') {
         hourlyRate = payValue;
       } else {
@@ -1032,14 +1093,14 @@
       // Base salary = hourly_rate x hours_per_day x working_days
       const baseSalary = hourlyRate * hoursPerDay * workingDays;
 
-      // Benefits
-      const totalBenefits = baseSalary * benefitRate;
+      // Benefits (SRA: no benefits)
+      const totalBenefits = pos.noBenefits ? 0 : baseSalary * benefitRate;
 
       // Subtotal
       const subSalaryBenefits = baseSalary + totalBenefits;
 
-      // Housing
-      const isEligibleHousing = hoursPerWeek > 17.5;
+      // Housing (SRA: no allowances)
+      const isEligibleHousing = !pos.noAllowances && hoursPerWeek > 17.5;
       const effectiveHousingRate = isEligibleHousing ? housingMonthly : 0;
       const totalHousing = isEligibleHousing ? calculateHousing(startDate, endDate, housingMonthly) : 0;
 
@@ -1110,7 +1171,11 @@
       document.getElementById('resBaseSalaryQAR').textContent = fmtQAR(toQAR(baseSalary));
 
       // Benefits
-      document.getElementById('resBenefitNote').textContent = (benefitRate * 100).toFixed(1) + '% of base salary';
+      if (pos.noBenefits) {
+        document.getElementById('resBenefitNote').textContent = 'Not applicable for this position type';
+      } else {
+        document.getElementById('resBenefitNote').textContent = (benefitRate * 100).toFixed(1) + '% of base salary';
+      }
       document.getElementById('resBenefitsUSD').textContent = fmtUSD(totalBenefits);
       document.getElementById('resBenefitsQAR').textContent = fmtQAR(toQAR(totalBenefits));
 
@@ -1119,7 +1184,9 @@
       document.getElementById('resSubSalaryQAR').textContent = fmtQAR(toQAR(subSalaryBenefits));
 
       // Housing
-      if (!isEligibleHousing) {
+      if (pos.noAllowances) {
+        document.getElementById('resHousingNote').textContent = 'Not applicable for this position type';
+      } else if (!isEligibleHousing) {
         document.getElementById('resHousingNote').textContent = 'Not eligible (\u2264 17.5 hrs/wk)';
       } else {
         document.getElementById('resHousingNote').textContent = '$' + housingMonthly.toLocaleString() + '/mo, prorated by calendar days';
@@ -1152,11 +1219,16 @@
       document.getElementById('hoursSlider').value = 37.5;
       document.getElementById('hoursSlider').disabled = false;
       document.getElementById('hoursSliderGroup').classList.remove('slider-disabled');
+      document.getElementById('hoursHint').style.display = 'none';
       updateHoursSliderDisplay();
       document.getElementById('startDate').value = '';
       document.getElementById('endDate').value = '';
       document.getElementById('benefitRate').value = '36.6';
+      document.getElementById('benefitRate').disabled = false;
+      document.getElementById('benefitRate').style.background = '';
       document.getElementById('housingMonthly').value = '2740';
+      document.getElementById('housingMonthly').disabled = false;
+      document.getElementById('housingMonthly').style.background = '';
       document.getElementById('dateWarning').style.display = 'none';
       document.getElementById('resultsWaiting').style.display = 'block';
       document.getElementById('resultsContent').style.display = 'none';
