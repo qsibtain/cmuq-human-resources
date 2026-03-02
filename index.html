@@ -463,6 +463,46 @@
       margin-top: 16px;
     }
 
+    /* Action links */
+    .action-bar {
+      background: var(--cmu-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .action-bar a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .action-bar a.primary {
+      background: var(--cmu-red);
+      color: white;
+    }
+    .action-bar a.primary:hover {
+      background: var(--cmu-red-dark);
+      transform: translateY(-1px);
+    }
+    .action-bar a.secondary {
+      background: #1565C0;
+      color: white;
+    }
+    .action-bar a.secondary:hover {
+      background: #0D47A1;
+      transform: translateY(-1px);
+    }
+
     @media print {
       body { background: white; font-size: 12px; line-height: 1.4; }
       .header { padding: 10px 0; }
@@ -473,7 +513,7 @@
       .card-header { padding: 8px 16px; font-size: 13px; }
       .card-header .card-icon { width: 22px; height: 22px; font-size: 11px; }
       .card-body { padding: 12px 16px; }
-      .actions-bar, .info-banner, .date-warning { display: none !important; }
+      .actions-bar, .action-bar, .info-banner, .date-warning { display: none !important; }
       input[type="range"] { display: none; }
       .slider-group { margin-bottom: 8px; }
       .slider-value { font-size: 14px; }
@@ -509,6 +549,8 @@
       .summary-row { grid-template-columns: 1fr; }
       .header h1 { font-size: 20px; }
       .position-info { flex-direction: column; align-items: flex-start; }
+      .action-bar { flex-direction: column; }
+      .action-bar a { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -740,6 +782,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <a href="https://cmuq.jotform.com/260543027759057" target="_blank" class="primary">Start Research Hire Form</a>
+      <a href="https://qsibtain.github.io/cmuq-human-resources/Position-Guide/" target="_blank" class="secondary">View Position Classification Guide</a>
     </div>
 
   </div>
